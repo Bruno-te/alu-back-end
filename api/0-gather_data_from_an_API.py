@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Script to get todos for a user from API"""
+"""script to get todos"""
 
 import requests
 import sys
@@ -7,30 +7,38 @@ import sys
 
 def main():
     """main function"""
-    user_id = int(sys.argv[1])
-    todo_url = 'https://jsonplaceholder.typicode.com/todos'
-    user_url = 'https://jsonplaceholder.typicode.com/users/{}'.format(user_id)
+    employeeID = int(sys.argv[1])
 
-    response = requests.get(todo_url)
+    todos_url = "https://jsonplaceholder.typicode.com/todos"
+    users_url = f"https://jsonplaceholder.typicode.com/users/{employeeID}"
 
-    total_questions = 0
-    completed = []
-    for todo in response.json():
+    todos_response = requests.get(todos_url)
+    todos_response.raise_for_status()
+    todos = todos_response.json()
 
-        if todo['userId'] == user_id:
-            total_questions += 1
+    user_response = requests.get(users_url)
+    user_response.raise_for_status()
+    user = user_response.json()
 
-            if todo['completed']:
-                completed.append(todo['title'])
+    EMPLOYEE_NAME = user.get("name")
+    TOTAL_NUMBER_OF_TASKS = 0
+    NUMBER_OF_DONE_TASKS = 0
+    titles = []
 
-    user_name = requests.get(user_url).json()['name']
+    for todo in todos:
+        if todo.get("userId") == employeeID:
+            TOTAL_NUMBER_OF_TASKS += 1
+            if todo.get("completed"):
+                titles.append(todo.get("title"))
+                NUMBER_OF_DONE_TASKS += 1
 
-    printer = ("Employee {} is done with tasks({}/{}):".format(user_name,
-               len(completed), total_questions))
-    print(printer)
-    for q in completed:
-        print("\t {}".format(q))
+    print(
+        f"Employee {EMPLOYEE_NAME} is done with tasks"
+        f"({NUMBER_OF_DONE_TASKS}/{TOTAL_NUMBER_OF_TASKS}):"
+    )
+    for title in titles:
+        print("\t " + title)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
