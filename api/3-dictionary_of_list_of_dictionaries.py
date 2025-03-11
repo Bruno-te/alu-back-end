@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-"""Exports data in the JSON format"""
+"""Fetches users and their corresponding tasks from JSONPlaceholder API  
+and exports them to a file in JSON format (`todo_all_employees.json`)."""
 
 if __name__ == "__main__":
 
